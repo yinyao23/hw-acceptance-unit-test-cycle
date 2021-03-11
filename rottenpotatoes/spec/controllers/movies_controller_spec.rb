@@ -1,6 +1,25 @@
 require 'rails_helper'
 
 RSpec.describe MoviesController, type: :controller do
+	describe 'showing the movie details' do
+		it 'should display the correct information with the show template' do
+			movie = Movie.create :id => 1, :title => 'fake_title', :director => 'somebody'
+			get :show, {:id => movie.id}
+			expect(assigns(:movie)).to eq movie
+			expect(response).to render_template('show')
+		end
+	end
+	describe 'showing homepage' do
+		it 'should display all the movies with the index template' do
+      movie_1 = Movie.create :id => 1, :title => 'fake_title_1', :director => 'yinyao'
+      movie_2 = Movie.create :id => 2, :title => 'fake_title_2', :director => 'yinyao'
+      movie_3 = Movie.create :id => 3, :title => 'fake_title_3', :director => 'qi'
+			Movie.stub(:all).and_return([movie_1, movie_2, movie_3])
+			get :index, {}
+			expect(assigns(:movies)).to eq [movie_1, movie_2, movie_3]
+			expect(response).to render_template('index')
+		end
+	end
 	describe 'searching similar movies' do
 			context 'with valid director' do
 				let(:movie) {Movie.create :id => 1, :title => 'fake_title', :director => 'somebody'}
